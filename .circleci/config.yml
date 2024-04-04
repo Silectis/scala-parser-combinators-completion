@@ -26,7 +26,7 @@ executors:
   compile:
     resource_class: small
     docker:
-      - image: docker pull sbtscala/scala-sbt:openjdk-11.0.16_1.8.1_2.12.17
+      - image: sbtscala/scala-sbt:openjdk-11.0.16_1.8.1_2.12.17
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
