@@ -51,7 +51,7 @@ lazy val commonSettings = Seq(
 // Add sonatype repository settings
   isSnapshot := version.value endsWith "SNAPSHOT",
   publishTo := {
-    val silectisMavenPublic = "https://s3.amazonaws.com/silectis-maven-public"
+    val silectisMavenPublic = "https://s3.amazonaws.com/silectis-maven-public/"
     if (isSnapshot.value)
       Some("snapshots" at silectisMavenPublic + "snapshots")
     else
