@@ -39,10 +39,6 @@ jobs:
       - run: sbt test
       - notify_slack_on_fail
   deploy:
-    filters:
-      branches:
-        only:
-          - master
     executor: compile
     steps:
       - checkout
@@ -58,6 +54,10 @@ workflows:
             - silectis-read
             - silectis-notify
       - deploy:
+          filters:
+            branches:
+              only:
+                - master
           context:
             - silectis-publish
             - silectis-notify
