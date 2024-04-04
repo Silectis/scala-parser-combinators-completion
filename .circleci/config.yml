@@ -23,19 +23,13 @@ commands:
           template: basic_success_1
 
 executors:
-  notification:
-    resource_class: small
-    docker:
-      - image: cimg/base:stable
-        auth:
-          username: $DOCKERHUB_USER
-          password: $DOCKERHUB_PASSWORD
   compile:
     resource_class: small
     docker:
-      - image: 866401578699.dkr.ecr.us-east-1.amazonaws.com/silectis/ci:0.8.2
-        environment:
-          MAVEN_OPTS: -Xss64m -Xmx2g -XX:ReservedCodeCacheSize=1g
+      - image: sbtscala/scala-sbt:graalvm-ce-22.3.3-b1-java17_1.9.9_2.12.19
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
 
 jobs:
   tests:
@@ -44,10 +38,6 @@ jobs:
       - checkout
       - run: sbt test
       - notify_slack_on_fail
-  test_success:
-    executor: notification
-    steps:
-      - notify_slack_on_success
   deploy:
     executor: compile
     steps:
@@ -63,10 +53,6 @@ workflows:
           context:
             - silectis-read
             - silectis-notify
-      - test_success:
-          context: silectis-notify
-          requires:
-            - tests
       - deploy:
           context:
             - silectis-publish
