@@ -1,0 +1,75 @@
+
+version: 2.1
+orbs:
+  slack: circleci/slack@4.4.0
+commands:
+  notify_slack:
+    steps:
+      - notify_slack_on_fail
+      - notify_slack_on_success
+
+  notify_slack_on_fail:
+    description: "slack notification on job failure"
+    steps:
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+
+  notify_slack_on_success:
+    description: "slack notification on job success"
+    steps:
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+
+executors:
+  notification:
+    resource_class: small
+    docker:
+      - image: cimg/base:stable
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
+  compile:
+    resource_class: small
+    docker:
+      - image: 866401578699.dkr.ecr.us-east-1.amazonaws.com/silectis/ci:0.8.2
+        environment:
+          MAVEN_OPTS: -Xss64m -Xmx2g -XX:ReservedCodeCacheSize=1g
+
+jobs:
+  tests:
+    executor: compile
+    steps:
+      - checkout
+      - run: sbt test
+      - notify_slack_on_fail
+  test_success:
+    executor: notification
+    steps:
+      - notify_slack_on_success
+  deploy:
+    executor: compile
+    steps:
+      - checkout
+      - run: sbt publish
+      - notify_slack_on_fail
+
+workflows:
+  version: 2
+  test_and_deploy:
+    jobs:
+      - tests:
+          context:
+            - silectis-read
+            - silectis-notify
+      - test_success:
+          context: silectis-notify
+          requires:
+            - tests
+      - deploy:
+          context:
+            - silectis-publish
+            - silectis-notify
+          requires:
+            - tests
