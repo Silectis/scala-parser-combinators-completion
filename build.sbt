@@ -51,11 +51,11 @@ lazy val commonSettings = Seq(
 // Add sonatype repository settings
   isSnapshot := version.value endsWith "SNAPSHOT",
   publishTo := {
-    val silectisMavenPublic = "https://s3.amazonaws.com/silectis-maven-public/"
+    val silectisMavenPublic = "s3://silectis-maven-public/"
     if (isSnapshot.value)
-      Some("snapshots" at silectisMavenPublic + "snapshots")
+      Some("S3" at silectisMavenPublic + "snapshots")
     else
-      Some("releases"  at silectisMavenPublic + "releases")
+      Some("S3"  at silectisMavenPublic + "releases")
   },
 // Sonatype credentials
   credentials += Credentials("Sonatype Nexus Repository Manager",
