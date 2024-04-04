@@ -34,13 +34,13 @@ lazy val async = project
   )
 
 lazy val commonSettings = Seq(
-  organization := "com.nexthink",
+  organization := "com.silectis",
   licenses += ("BSD-3", url("https://opensource.org/licenses/bsd-3-clause")),
-  version := "1.1.1",
+  version := "1.1.2",
   scalaVersion := "2.12.2",
-  homepage := Some(url("https://github.com/nexthink/scala-parser-combinators-completion")),
+  homepage := Some(url("https://github.com/silectis/scala-parser-combinators-completion")),
   scmInfo := Some(
-    ScmInfo(url("https://github.com/nexthink/scala-parser-combinators-completion"), "git@github.com:nexthink/scala-parser-combinators-completions.git")),
+    ScmInfo(url("https://github.com/silectis/scala-parser-combinators-completion"), "git@github.com:silectis/scala-parser-combinators-completions.git")),
   developers := List(
     Developer(
       id = "jchapuis",
@@ -50,12 +50,13 @@ lazy val commonSettings = Seq(
     )),
 // Add sonatype repository settings
   isSnapshot := version.value endsWith "SNAPSHOT",
-  publishTo := Some(
+  publishTo := {
+    val silectisMavenPublic = "https://s3.amazonaws.com/silectis-maven-public/"
     if (isSnapshot.value)
-      Opts.resolver.sonatypeSnapshots
+      Some("snapshots" at silectisMavenPublic + "snapshots")
     else
-      Opts.resolver.sonatypeStaging
-  ),
+      Some("releases"  at silectisMavenPublic + "releases")
+  },
 // Sonatype credentials
   credentials += Credentials("Sonatype Nexus Repository Manager",
                              "oss.sonatype.org",
@@ -63,7 +64,7 @@ lazy val commonSettings = Seq(
                              sys.env.getOrElse("SONATYPE_PASSWORD", "")),
   libraryDependencies ++= Seq(
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.6",
-    "org.json4s"             %% "json4s-native"            % "3.5.3"
+    "org.json4s"             %% "json4s-native"            % "4.0.3"
   )
 )
 
